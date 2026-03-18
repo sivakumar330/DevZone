@@ -405,3 +405,69 @@
 
 
       
+      // =============================================
+      // SCROLL REVEAL — One by one card animations
+      // =============================================
+
+      function initScrollReveal() {
+        // Define which elements to animate and their animation type
+        const revealSelectors = [
+          // Project cards — fade up one by one
+          { selector: '.project-card',       type: '',             stagger: true },
+          // Skill icon boxes — scale in one by one
+          { selector: '.skill-icon-box',     type: 'reveal-scale', stagger: true },
+          // Skill items (progress bars) — from left
+          { selector: '.skill-item',         type: 'reveal-left',  stagger: true },
+          // Timeline items — alternate left/right
+          { selector: '.timeline-item',      type: '',             stagger: true },
+          // Contact items — from left
+          { selector: '.contact-item',       type: 'reveal-left',  stagger: true },
+          // Resume items — from right
+          { selector: '.resume-item',        type: 'reveal-right', stagger: true },
+          // About stats — fade up
+          { selector: '.stat',               type: '',             stagger: true },
+          // Section headers
+          { selector: '.section-header',     type: '',             stagger: false },
+        ];
+
+        revealSelectors.forEach(({ selector, type, stagger }) => {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach((el, index) => {
+            // Add base reveal class
+            el.classList.add('reveal');
+            // Add direction class if any
+            if (type) el.classList.add(type);
+            // Add stagger delay (cycles through delay-1 to delay-8)
+            if (stagger) {
+              const delayClass = `reveal-delay-${(index % 8) + 1}`;
+              el.classList.add(delayClass);
+            }
+          });
+        });
+
+        // IntersectionObserver — triggers when element enters viewport
+        const scrollObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              // Once visible, stop observing (animation plays once)
+              scrollObserver.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.12,
+          rootMargin: '0px 0px -40px 0px'
+        });
+
+        // Observe all reveal elements
+        document.querySelectorAll('.reveal').forEach(el => {
+          scrollObserver.observe(el);
+        });
+      }
+
+      // Run after DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollReveal);
+      } else {
+        initScrollReveal();
+      }
